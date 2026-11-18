@@ -1297,10 +1297,20 @@ def mask_email(addr):
     return (name[:2] + "*" * max(1, len(name) - 2) + "@" + host) if name else ""
 
 
-def mail_ready():
-    return bool(os.environ.get("BREVO_API_KEY") or
-                (os.environ.get("GMAIL_USER") and os.environ.get("GMAIL_APP_PASSWORD")))
 
+def mail_ready():
+    brevo = bool((os.environ.get("BREVO_API_KEY") or "").strip())
+    sender = bool((os.environ.get("MAIL_FROM") or "").strip())
+    gmail = bool(
+        os.environ.get("GMAIL_USER") and
+        os.environ.get("GMAIL_APP_PASSWORD")
+    )
+
+    print("[MAIL CHECK] BREVO_API_KEY:", brevo)
+    print("[MAIL CHECK] MAIL_FROM:", sender)
+    print("[MAIL CHECK] GMAIL CONFIGURED:", gmail)
+
+    return brevo or gmail
 
 def send_mail(to, subject, text):
     """Send one plain-text email. Returns (True, '') or (False, reason).
